@@ -121,7 +121,7 @@ export default catsReducer;
 
 We also set up the initial state here. We can see that in the `'LOADING_CATS'`
 case, `state.loading` becomes `true`, while the rest of `state` is just copied
-to a new object. In the `'ADD_CATS'` case, `state.loading` becomes `false`,
+to a new object. In the `'LOADING_CATS'` case, `state.loading` becomes `false`,
 and `state.cats` is set to the `action.cats` payload (HINT: so we know we're
 expecting a payload object with a `cats` key).
 
@@ -272,10 +272,10 @@ component is mounting for the first time*. This is the perfect place to go and
 get the cat pics.
 
 We need to define our `componentDidMount()` function so that it calls our
-`fetchCats()` action creator. We also need to write out a `mapDispatchToProps()`
-function to make `fetchCats()` available. We can then access the function as
-`this.props.fetchCats()` inside the component and call this when the component
-mounts:
+`fetchCats()` action creator. Rather than write out the full
+`mapDispatchToProps()` function to make `fetchCats()` available, we'll go with the shorthand approach, passing `fetchCats` inside an object as
+the second argument to `connect`. We can then access the function as `this.props.fetchCats()` inside the component and call this when
+the component mounts:
 
 ```js
 // src/App.js
@@ -286,7 +286,6 @@ import { fetchCats } from './actions/catActions'
 class App extends Component {
   
   componentDidMount() {
-    console.log(this.props)
     this.props.fetchCats()
   }
   
@@ -308,18 +307,12 @@ const mapStateToProps = state => {
   }
 }
 
-const mapDispatchToProps = dispatch => {
-  return {
-    fetchCats: () => dispatch(fetchCats())
-  }
-}
-export default connect(mapStateToProps, mapDispatchToProps)(App)
+export default connect(mapStateToProps, { fetchCats })(App)
 ```
 
-Ah! If we check the console, we'll see that `this.props.catPics` is set to `[]`
-on the first two renders, but on the third, we see an array of 20 cat objects!
-Notice that we still can call `dispatch` here, even though we're also calling
-`dispatch` in our action creator.
+Ah! If we check the console, we'll see that `this.props.catPics` is set
+to `[]` on the first two renders, but on the third, we see an array of
+20 cat objects!
 
 > **Aside**: Why is `this.props.catPics` set to `[]` on the first two renders?
 The first render is the initial render, which is always expected. The _second_
@@ -353,7 +346,7 @@ Thunk application. Of two components, one is purely presentational, just like a
 regular React app. The other connects to Redux, but beyond that, is not any
 different than a regular React + Redux app. Thunk lets us augment our action
 creators and handle our asynchronous requests without requiring any major
-changes to other parts of the application.
+changes to other parts of the applcation.
 
 ## Bonus
 
